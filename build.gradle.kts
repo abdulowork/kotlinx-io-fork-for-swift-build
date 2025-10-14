@@ -472,10 +472,10 @@ tasks.register("convertThisProjectToSwiftPMBuild") {
                     .mapNotNull { d -> projectNodes[d]?.targetName }
                     .sorted()
                 val depsForProj = (projDirectProjDeps + projRemoteDeps).sorted()
-                val flags = perProjCOtherFlags[pn.proj].orEmpty()
+                val flags = perProjCOtherFlags[pn.proj].orEmpty().joinToString(" ")
                 val cFlagsLine =
                     if (flags.isNotEmpty())
-                        "            , cSettings: [.unsafeFlags([${swiftStringArray(flags)}])]"
+                        "            , cSettings: [.define( \"KOTLIN\", to: \"$flags\")]"
                     else ""
                 appendLine("        .target(")
                 appendLine("            name: \"${pn.targetName}\",")
