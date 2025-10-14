@@ -24,7 +24,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":kotlinx-io-core"))
-                implementation(libs.kotlinx.benchmark.runtime)
+                 implementation(libs.kotlinx.benchmark.runtime)
+//                implementation(project(":benchmarks-runtime"))
             }
         }
 
