@@ -59,6 +59,8 @@ kover {
     }
 }
 
+val PKG_PLACEHOLDER = "__PACKAGE_DIR__"
+
 data class ModuleCoord(val group: String, val name: String, val version: String)
 data class RemoteNode(val coord: ModuleCoord, val targetName: String, val files: List<File>)
 data class ProjNode(val proj: Project, val targetName: String)
@@ -237,6 +239,20 @@ fun ensureRemoteTarget(
     return node
 }
 
+
+/** Make a path relative to pkgRoot (fallback to absolute if relativize fails). */
+private fun relFromPkgRoot(pkgRoot: File, absPath: String): String {
+    return try {
+        val base = pkgRoot.toPath().toAbsolutePath().normalize()
+        val p = File(absPath).toPath().toAbsolutePath().normalize()
+        base.relativize(p).toString()
+    } catch (_: Exception) {
+        absPath
+    }
+}
+
+
+
 /* -------------------- NEW: Build -Xfragment* using the SPM links (remove .swift) -------------------- */
 
 private fun buildKonanFragmentArgsUsingLinks(
@@ -248,7 +264,6 @@ private fun buildKonanFragmentArgsUsingLinks(
     val ext = p.extensions.findByType(KotlinProjectExtension::class.java) ?: return emptyList()
     val allSets: List<KotlinSourceSet> = ext.sourceSets.toList()
 
-    // choose non-test sets; fall back to "main" for JVM-like projects
     val nonTest = allSets.filterNot { it.name.endsWith("Test", true) || it.name.endsWith("AndroidTest", true) }
     val chosen: List<KotlinSourceSet> = when {
         nonTest.any { it.name in preferSetNames } -> nonTest.filter { it.name in preferSetNames }
@@ -257,7 +272,6 @@ private fun buildKonanFragmentArgsUsingLinks(
     }
     if (chosen.isEmpty()) return emptyList()
 
-    // Build refinement and depth from chosen sets
     val byName = chosen.associateBy { it.name }
     val parents: Map<String, Set<String>> = chosen.associate { ss ->
         ss.name to ss.dependsOn.mapNotNull { byName[it.name]?.name }.toSet()
@@ -272,14 +286,22 @@ private fun buildKonanFragmentArgsUsingLinks(
     val xRefines = chosen.flatMap { c -> c.dependsOn.map { pset -> "${c.name}:${pset.name}" } }
         .distinct().joinToString(",")
 
-    // Build Xfragment-sources from symlinked paths (KEEP .swift)
     val spmTargetRoot = File(pkgRoot, "Sources/$targetName")
+
+    // Build -Xfragment-sources from symlinked .swift files, but:
+    //  - strip ".swift"
+    //  - make path relative to pkgRoot
+    //  - prefix with ${PACKAGE_DIR}/
     val perSetFiles: Map<String, List<String>> = chosen.associate { ss ->
         val setDir = File(spmTargetRoot, ss.name)
         val files = if (setDir.isDirectory) {
             setDir.walkTopDown()
                 .filter { it.isFile && it.name.endsWith(".swift") }
-                .map { it.absolutePath.removeSuffix(".swift")}
+                .map { swiftLink ->
+                    val stem = swiftLink.absolutePath.removeSuffix(".swift")
+                    val rel = relFromPkgRoot(pkgRoot, stem)
+                    "${PKG_PLACEHOLDER}/$rel"
+                }
                 .distinct()
                 .sorted()
                 .toList()
@@ -297,11 +319,10 @@ private fun buildKonanFragmentArgsUsingLinks(
     if (xSources.isNotEmpty()) args += "-Xfragment-sources=$xSources"
     args += "-Xmulti-platform"
 
-    // Debug prints to verify we're using symlinks:
     if (xSources.contains("/src/")) {
         println("WARNING: xSources contains '/src/' — expected symlink paths under Sources/. Check link creation order.")
     } else {
-        println("xSources built from SPM links for target=$targetName")
+        println("xSources built from SPM links with \${PACKAGE_DIR} for target=$targetName")
     }
     return args
 }
@@ -311,7 +332,6 @@ private fun buildKonanFragmentArgsForRemoteTargetLinks(pkgRoot: File, targetName
     val spmTargetRoot = File(pkgRoot, "Sources/$targetName")
     if (!spmTargetRoot.isDirectory) return emptyList()
 
-    // collect set directories under the target (e.g., "commonMain")
     val setNames = spmTargetRoot.listFiles { f -> f.isDirectory }?.map { it.name }?.sorted().orEmpty()
     if (setNames.isEmpty()) return emptyList()
 
@@ -320,7 +340,11 @@ private fun buildKonanFragmentArgsForRemoteTargetLinks(pkgRoot: File, targetName
         val setDir = File(spmTargetRoot, set)
         setDir.walkTopDown()
             .filter { it.isFile && it.name.endsWith(".swift") }
-            .map { f -> "$set:${f.absolutePath.removeSuffix(".swift")}" }
+            .map { swiftLink ->
+                val stem = swiftLink.absolutePath.removeSuffix(".swift")
+                val rel = relFromPkgRoot(pkgRoot, stem)
+                "$set:\${PACKAGE_DIR}/$rel"
+            }
             .toList()
     }.joinToString(",")
 
@@ -330,6 +354,7 @@ private fun buildKonanFragmentArgsForRemoteTargetLinks(pkgRoot: File, targetName
     args += "-Xmulti-platform"
     return args
 }
+
 
 /* Swift array serializer */
 private fun swiftStringArray(items: List<String>): String =
