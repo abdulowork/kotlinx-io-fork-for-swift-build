@@ -1,0 +1,1 @@
+../../../integration/kotlinx-io-okio/common/src/OkioAdapters.kt
