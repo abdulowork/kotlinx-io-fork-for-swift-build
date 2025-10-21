@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.nio.file.Files
-import java.util.zip.ZipInputStream
 import kotlin.collections.associate
 import kotlin.collections.ifEmpty
 import kotlin.jvm.java
@@ -86,7 +85,6 @@ fun RemoteSPM.asDepAnnotation() : String {
 val PKG_PLACEHOLDER = "__PACKAGE_DIR__"
 
 data class ModuleCoord(val group: String, val name: String, val version: String)
-data class RemoteNode(val coord: ModuleCoord, val targetName: String, val files: List<File>)
 data class ProjNode(val proj: Project, val targetName: String)
 
 
@@ -174,7 +172,7 @@ fun directExternalModulesForSets(p: Project, setNames: Set<String>): Set<ModuleC
                 val g = dep.group
                 val n = dep.name
                 val v = dep.version
-                if (!g.isNullOrBlank() && n.isNotBlank() && !v.isNullOrBlank()) {
+                if (g.isNotBlank() && n.isNotBlank() && !v.isNullOrBlank()) {
                     acc += ModuleCoord(g, n, v)
                 }
             }
@@ -301,10 +299,6 @@ private fun buildKonanFragmentArgsUsingLinks(
     return args
 }
 
-/* Swift array serializer */
-private fun swiftStringArray(items: List<String>): String =
-    items.joinToString(", ") { "\"${it.replace("\"", "\\\"")}\"" }
-
 /* -------------------- Task -------------------- */
 
 tasks.register("convertThisProjectToSwiftPMBuild") {
@@ -349,11 +343,9 @@ tasks.register("convertThisProjectToSwiftPMBuild") {
 
         // For each project node, collect its external modules (direct only)
         val allProjects = listOf(project) + depGraph.keys.toList()
-        println("All Projects are ${allProjects}")
         val externalsByProject: Map<Project, Set<ModuleCoord>> =
             allProjects.associateWith { p -> directExternalModulesForSets(p, setNamesForDeps) }
 
-        println("ExternalsByProject: $externalsByProject")
         val remoteTargets = mutableMapOf<ModuleCoord, RemoteSPM>()
         val projectNodes = mutableMapOf<Project, ProjNode>()
 
@@ -412,10 +404,9 @@ tasks.register("convertThisProjectToSwiftPMBuild") {
                     .mapNotNull { remoteTargets[it]?.asDepAnnotation() }
                     .sorted()
                 val projDirectProjDeps = depGraph[pn.proj].orEmpty()
-                    .mapNotNull { d -> "\"${projectNodes[d]?.targetName}\"" }                    .sorted()
+                    .map { d -> "\"${projectNodes[d]?.targetName}\"" }                    .sorted()
                 val depsForProj = (projDirectProjDeps + projRemoteDeps).sorted()
 
-                println("The deps of the projects are ${depsForProj}")
                 val flags = perProjCOtherFlags[pn.proj].orEmpty().joinToString(" ")
                 val cFlagsLine =
                     if (flags.isNotEmpty())
