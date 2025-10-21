@@ -66,7 +66,7 @@ data class RemoteSPM(val url: String, val exact: String, val productName : Strin
 val kmpToSpm: Map<String, RemoteSPM> = mapOf(
     "com.squareup.okio:okio" to RemoteSPM(
         url = "https://github.com/berkaybozkurt-jb/okio-fork-for-swift-build",
-        exact = "1.0.1", // ensure this matches an actual Git tag in the SPM repo,
+        exact = "1.0.3", // ensure this matches an actual Git tag in the SPM repo,
         productName = "okio",
         productPackage = "okio-fork-for-swift-build",
     )
@@ -172,7 +172,7 @@ fun directExternalModulesForSets(p: Project, setNames: Set<String>): Set<ModuleC
                 val g = dep.group
                 val n = dep.name
                 val v = dep.version
-                if (g.isNotBlank() && n.isNotBlank() && !v.isNullOrBlank()) {
+                if (!g.isNullOrBlank() && n.isNotBlank() && !v.isNullOrBlank()) {
                     acc += ModuleCoord(g, n, v)
                 }
             }
