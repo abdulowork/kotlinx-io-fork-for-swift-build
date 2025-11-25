@@ -7,7 +7,7 @@ let package = Package(
     products: [
         .library(name: "kotlinx_io", targets: ["kotlinx_io", "kotlinx_io_bytestring", "kotlinx_io_core", "kotlinx_io_okio"]),
     ],
- dependencies: [ .package(url : "https://github.com/berkaybozkurt-jb/okio-fork-for-swift-build", exact : "1.0.3") ],
+ dependencies: [ .package(url : "https://github.com/rbbozkurt/okio-fork-for-swift-build", exact : "3.17.0-swiftpm-SNAPSHOT.0") ],
     targets: [
         .target(
             name: "kotlinx_io",
