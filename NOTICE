@@ -6,3 +6,24 @@
 
    kotlinx-io library.
    Copyright 2017-2023 JetBrains s.r.o and respective authors and developers
+
+   ---------------------------------------------------------------------------
+   Fork Notice
+   ---------------------------------------------------------------------------
+
+   This repository is a fork of the official `kotlinx-io` library, created to
+   prototype interoperability between Kotlin/Native and the Swift build system
+   (`swift-build`) and to provide Swift Package Manager (SPM) compatibility.
+
+   Modifications in this fork include:
+   - Addition of an SPM `Package.swift` manifest
+   - Addition of SPM-compatible `.kt.swift` source shims
+   - Embedding Kotlin/Native (`konanc`) configuration via `cSettings`
+   - Mapping of the Okio dependency to a SwiftPM-compatible fork
+   - Build metadata enabling integration with a custom `swift-build` toolchain
+
+   All modifications in this repository remain licensed under the same
+   Apache License, Version 2.0, as the upstream project.
+
+   For the original project, visit:
+   https://github.com/Kotlin/kotlinx-io
