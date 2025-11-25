@@ -1,111 +1,107 @@
-# kotlinx-io
+# kotlinx-io-fork-for-swift-build
 
-[![Kotlin Alpha](https://kotl.in/badges/alpha.svg)](https://kotlinlang.org/docs/components-stability.html)
 [![JetBrains incubator project](https://jb.gg/badges/incubator.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![GitHub license](https://img.shields.io/github/license/kotlin/kotlinx-io)](LICENSE)
-[![Download](https://img.shields.io/maven-central/v/org.jetbrains.kotlinx/kotlinx-io-core)](https://central.sonatype.com/artifact/org.jetbrains.kotlinx/kotlinx-io-core/)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.1-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![TeamCity build](https://img.shields.io/teamcity/build/s/KotlinTools_KotlinxIo_BuildAggregated.svg?server=http%3A%2F%2Fteamcity.jetbrains.com)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=KotlinTools_KotlinxIo_BuildAggregated&guest=1)
-[![KDoc link](https://img.shields.io/badge/API_reference-KDoc-blue)](https://kotlin.github.io/kotlinx-io/)
 
-A multiplatform Kotlin library providing basic IO primitives. `kotlinx-io` is based on [Okio](https://github.com/square/okio) but does not preserve backward compatibility with it.
+This repository is a **Swift Package Manager–compatible fork** of  
+[`Kotlin/kotlinx-io`][kotlinx-io]. 
 
-## Overview
-**kotlinx-io** is built around `Buffer` - a mutable sequence of bytes.
+It is used to prototype **Kotlin/Native integration within the Swift build system (`swift-build`)**.
 
-`Buffer` works like a queue, allowing to read data from its head or to write data to its tail.
-`Buffer` provides functions to read and write data of different built-in types, and to copy data to or from other `Buffer`s.
-Depending on the target platform, extension functions allowing data exchange with platform-specific types are also available.
+The goal of this fork is *not* to modify the public API of `kotlinx-io`, but to:
 
-A `Buffer` consists of segments organized as a linked list: segments allow reducing memory allocations during the buffer's expansion and copy,
-with the latter achieved by delegating or sharing the ownership over the underlying buffer's segments with other buffers.
+- expose the library as a **Swift package** that can be resolved and built by a modified `swift-build`, and
+- embed the required **Kotlin/Native (`konanc`) configuration** via `Package.swift` so Swift targets can depend on Kotlin code.
 
-**kotlinx-io** provides interfaces representing data sources and destinations - `Source` and `Sink`,
-and in addition to the *mutable* `Buffer` the library also provides an *immutable* sequence of bytes - `ByteString`.
+> **Important:** This repository is experimental and requires a custom version of  
+> `swift-build` that supports Kotlin build.  
+> It will **not** build with stock SwiftPM or Xcode toolchains.
 
-An experimental filesystem support is shipped under the `kotlinx.io.files` package,
-which includes the `FileSystem` interface and its default implementation - `SystemFileSystem`.
+---
 
-`FileSystem` provides basic operations for working with files and directories, which are represented by yet another class under the same package - `Path`.
+## Upstream Project
 
-There are several `kotlinx-io` modules:
-- [kotlinx-io-bytestring](./bytestring) - provides `ByteString`.
-- [kotlinx-io-core](./core) - provides IO primitives (`Buffer`, `Source`, `Sink`), filesystems support, depends on `kotlinx-io-bytestring`.
-- [kotlinx-io-okio](./integration/okio) - bridges `kotlinx-io` and `Okio` `ByteString`, `kotlinx.io.RawSource` and `okio.Source`, `kotlinx.io.RawSink` and `okio.Sink`. 
+Official library:
 
-## Using in your projects
+- **Repository:** [kotlinx-io][kotlinx-io]
+- **Description:** Kotlin multiplatform I/O library
 
-> Note that the library is experimental, and the API is subject to change.
+This fork does not change I/O functionality; it only provides the SwiftPM-compatibility layer needed for Kotlin/Native integration.
 
-### Gradle
+---
 
-Make sure that you have `mavenCentral()` in the list of repositories:
-```kotlin
-repositories {
-    mavenCentral()
-}
+## What This Fork Adds
+
+### 1. SwiftPM Manifest
+
+A fully generated `Package.swift` allowing `kotlinx-io` to be resolved as a Swift package.
+
+### 2. SwiftPM-Compatible Source Layout
+
+Kotlin sources are exposed under `Sources/` using `.kt.swift` shims:
+
+- Each original `.kt` file is mirrored as `<name>.kt.swift` so SwiftPM can discover it.
+- During the build, `swift-build` restores these shims back to `.kt` and compiles them with `konanc`.
+
+### 3. Embedded Kotlin/Native (`konanc`) Flags via `cSettings`
+
+All required Kotlin/Native fragment configuration (e.g.  
+`-Xfragments`, `-Xfragment-refines`, `-Xfragment-sources`, `-Xmulti-platform`)  
+is encoded into:
+
+```swift
+cSettings: [
+    .define("KOTLIN", to: "<konanc flags with __PACKAGE_DIR__ placeholder>")
+]
 ```
 
-Add the library to dependencies:
-```kotlin
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.8.0")
-}
+### 4. Okio Dependency Mapping
+
+`kotlinx-io` depends transitively on Okio.
+
+This fork resolves that dependency using a SwiftPM-compatible Okio fork:
+
+- [okio-fork-for-swift-build][okio-fork-for-swift-build]
+
+The Gradle conversion maps:
+
+```text
+com.squareup.okio:okio  →  https://github.com/rbbozkurt/okio-fork-for-swift-build
 ```
 
-In multiplatform projects, add a dependency to the `commonMain` source set dependencies:
-```kotlin
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.8.0")
-            }
-        }
-    }
-}
-```
 
-### Maven
+## Requirements
 
-Add the library to dependencies:
-```xml
-<dependency>
-    <groupId>org.jetbrains.kotlinx</groupId>
-    <artifactId>kotlinx-io-core-jvm</artifactId>
-    <version>0.8.0</version>
-</dependency>
-```
+To build this package successfully, you need:
 
-### JPMS support
+- A working Kotlin/Native (konanc) toolchain
 
-On JVM, `kotlinx-io` supports Java Modules:
-- `kotlinx-io-bytestring` library provides `kotlinx.io.bytestring` module; 
-- `kotlinx-io-core` library provides `kotlinx.io.core` module.
-- `kotlinx-io-okio` library provides `kotlinx.io.okio` module.
+- A custom Swift build system (swift-build)
 
-Read [this](https://kotlinlang.org/docs/gradle-configure-project.html#configure-with-java-modules-jpms-enabled) article 
-for details on how to configure a Gradle project to utilize JPMS.
+This fork will **not** build with unmodified SwiftPM/Xcode.
 
-### Android
+## JetBrains Notice
 
-`kotlinx-io` is not tested on Android on a regular basis,
-but the library is compatible with Android 5.0+ (API level 21+).
+This repository is an experimental integration prototype maintained by members of the Kotlin Build Tools team.
+It is intended solely for evaluating Kotlin/Native interoperability within the Swift build system.
+
+This is not an official distribution of kotlinx-io.
+Functionality, structure, and stability may change at any time.
+
+For the official project, visit:
+[kotlinx-io]
 
 ## Contributing
 
 Read the [Contributing Guidelines](CONTRIBUTING.md).
 
 ## Code of Conduct
-This project and the corresponding community are governed by the [JetBrains Open Source and Community Code of Conduct](https://confluence.jetbrains.com/display/ALL/JetBrains+Open+Source+and+Community+Code+of+Conduct). Please make sure you read it.
+This project and the corresponding community are governed by the [JetBrains Open Source and Community Code of Conduct][jetbrains-oc-cc]. Please make sure you read it.
 
 ## License
-kotlinx-io is licensed under the [Apache 2.0 License](LICENSE).
+kotlinx-io-fork-for-swift-build is licensed under the [Apache 2.0 License](LICENSE).
 
-## Credits
-
-Thanks to everyone involved in the project.
-
-An honorable mention goes to the developers of [Okio](https://square.github.io/okio/) 
-that served as the foundation for `kotlinx-io` and to [Jesse Wilson](https://github.com/swankjesse),
-for the help with `Okio` adaption, his suggestions, assistance and guidance with `kotlinx-io` development.
+[kotlinx-io]: https://github.com/Kotlin/kotlinx-io
+[jetbrains-oc-cc]: https://confluence.jetbrains.com/display/ALL/JetBrains+Open+Source+and+Community+Code+of+Conduct
+[okio]: https://github.com/square/okio
+[okio-fork-for-swift-build]: https://github.com/rbbozkurt/okio-fork-for-swift-build
