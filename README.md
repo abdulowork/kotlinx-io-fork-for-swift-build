@@ -5,7 +5,7 @@
 [![GitHub license](https://img.shields.io/github/license/kotlin/kotlinx-io)](LICENSE)
 
 This repository is a **Swift Package Manager–compatible fork** of  
-[`Kotlin/kotlinx-io`](https://github.com/Kotlin/kotlinx-io). 
+[`Kotlin/kotlinx-io`][kotlinx-io]. 
 
 It is used to prototype **Kotlin/Native integration within the Swift build system (`swift-build`)**.
 
@@ -24,8 +24,8 @@ The goal of this fork is *not* to modify the public API of `kotlinx-io`, but to:
 
 Official library:
 
-- **Repository:** [kotlinx-io](https://github.com/Kotlin/kotlinx-io)
-- **Description:** A multiplatform Kotlin library providing basic IO primitives. `kotlinx-io` is based on [Okio](https://github.com/square/okio) but does not preserve backward compatibility with it.
+- **Repository:** [kotlinx-io][kotlinx-io]
+- **Description:** Kotlin multiplatform I/O library
 
 This fork does not change I/O functionality; it only provides the SwiftPM-compatibility layer needed for Kotlin/Native integration.
 
@@ -62,12 +62,12 @@ cSettings: [
 
 This fork resolves that dependency using a SwiftPM-compatible Okio fork:
 
-- [okio-fork-for-swift-build](https://github.com/berkaybozkurt-jb/okio-fork-for-swift-build)
+- [okio-fork-for-swift-build][okio-fork-for-swift-build]
 
 The Gradle conversion maps:
 
 ```text
-com.squareup.okio:okio  →  https://github.com/berkaybozkurt-jb/okio-fork-for-swift-build
+com.squareup.okio:okio  →  https://github.com/rbbozkurt/okio-fork-for-swift-build
 ```
 
 
@@ -90,14 +90,19 @@ This is not an official distribution of kotlinx-io.
 Functionality, structure, and stability may change at any time.
 
 For the official project, visit:
-https://github.com/Kotlin/kotlinx-io
+[kotlinx-io]
 
 ## Contributing
 
 Read the [Contributing Guidelines](CONTRIBUTING.md).
 
 ## Code of Conduct
-This project and the corresponding community are governed by the [JetBrains Open Source and Community Code of Conduct](https://confluence.jetbrains.com/display/ALL/JetBrains+Open+Source+and+Community+Code+of+Conduct). Please make sure you read it.
+This project and the corresponding community are governed by the [JetBrains Open Source and Community Code of Conduct][jetbrains-oc-cc]. Please make sure you read it.
 
 ## License
 kotlinx-io-fork-for-swift-build is licensed under the [Apache 2.0 License](LICENSE).
+
+[kotlinx-io]: https://github.com/Kotlin/kotlinx-io
+[jetbrains-oc-cc]: https://confluence.jetbrains.com/display/ALL/JetBrains+Open+Source+and+Community+Code+of+Conduct
+[okio]: https://github.com/square/okio
+[okio-fork-for-swift-build]: https://github.com/rbbozkurt/okio-fork-for-swift-build
