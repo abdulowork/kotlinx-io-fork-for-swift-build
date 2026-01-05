@@ -5,6 +5,7 @@
 
 pluginManagement {
     includeBuild("build-logic")
+    includeBuild("../swift-build/Gradle2SwiftPMConversionPlugin")
 
     repositories {
         mavenCentral()

@@ -1,1 +1,1 @@
-../../../integration/kotlinx-io-okio/native/src/ExceptionUtilsNative.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_okio/nativeMain/../../../integration/kotlinx-io-okio/native/src/ExceptionUtilsNative.kt

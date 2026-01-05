@@ -1,1 +1,1 @@
-../../../core/common/src/SegmentPool.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/commonMain/../../../core/common/src/SegmentPool.kt

@@ -1,1 +1,1 @@
-../../../bytestring/common/src/Hex.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_bytestring/commonMain/../../../bytestring/common/src/Hex.kt

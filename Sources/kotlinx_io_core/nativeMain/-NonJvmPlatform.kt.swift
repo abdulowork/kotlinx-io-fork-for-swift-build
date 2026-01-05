@@ -1,1 +1,1 @@
-../../../core/native/src/-NonJvmPlatform.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/nativeMain/../../../core/native/src/-NonJvmPlatform.kt

@@ -1,1 +1,1 @@
-../../../src/commonMain/kotlin/Stub.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io/commonMain/../../../src/commonMain/kotlin/Stub.kt

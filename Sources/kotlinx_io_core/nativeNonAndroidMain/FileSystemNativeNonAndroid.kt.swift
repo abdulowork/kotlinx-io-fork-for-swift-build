@@ -1,1 +1,1 @@
-../../../core/nativeNonAndroid/src/files/FileSystemNativeNonAndroid.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/nativeNonAndroidMain/../../../core/nativeNonAndroid/src/files/FileSystemNativeNonAndroid.kt

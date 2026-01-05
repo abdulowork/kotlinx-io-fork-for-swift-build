@@ -1,1 +1,1 @@
-../../../bytestring/common/src/unsafe/UnsafeByteStringOperations.kt
+/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_bytestring/commonMain/../../../bytestring/common/src/unsafe/UnsafeByteStringOperations.kt
