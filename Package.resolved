@@ -1,13 +1,13 @@
 {
-  "originHash" : "998d1285ff743a0da2af1e81117231d1e5c80f14e4be72417160ff7354566a5f",
+  "originHash" : "f1bbbcef16d85e7793ad199368d21d81fa73e41a95249c4625f2ed4b9bf4c8d4",
   "pins" : [
     {
       "identity" : "okio-fork-for-swift-build",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rbbozkurt/okio-fork-for-swift-build",
       "state" : {
-        "revision" : "c5bdc3be304022fe967a98fb3851cb88d0272232",
-        "version" : "3.17.0-swiftpm-SNAPSHOT.2"
+        "revision" : "f855987c66c5bc003634e89d3897ef8e1c6a666d",
+        "version" : "3.17.0-swiftpm-SNAPSHOT.3"
       }
     }
   ],
