@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/commonMain/../../../core/common/src/Sinks.kt
+../../../core/common/src/Sinks.kt

@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/nativeMain/files/../../../../core/native/src/files/PathsNative.kt
+../../../../core/native/src/files/PathsNative.kt

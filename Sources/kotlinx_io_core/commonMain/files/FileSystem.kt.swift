@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/commonMain/files/../../../../core/common/src/files/FileSystem.kt
+../../../../core/common/src/files/FileSystem.kt

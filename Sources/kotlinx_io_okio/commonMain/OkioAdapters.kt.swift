@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_okio/commonMain/../../../integration/kotlinx-io-okio/common/src/OkioAdapters.kt
+../../../integration/kotlinx-io-okio/common/src/OkioAdapters.kt

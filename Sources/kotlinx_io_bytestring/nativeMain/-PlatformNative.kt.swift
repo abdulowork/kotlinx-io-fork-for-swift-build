@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_bytestring/nativeMain/../../../bytestring/native/src/-PlatformNative.kt
+../../../bytestring/native/src/-PlatformNative.kt

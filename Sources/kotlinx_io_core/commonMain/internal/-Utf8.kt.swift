@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/commonMain/internal/../../../../core/common/src/internal/-Utf8.kt
+../../../../core/common/src/internal/-Utf8.kt

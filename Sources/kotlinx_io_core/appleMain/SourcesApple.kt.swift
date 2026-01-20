@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/appleMain/../../../core/apple/src/SourcesApple.kt
+../../../core/apple/src/SourcesApple.kt

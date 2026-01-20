@@ -1,1 +1,1 @@
-/Users/berkay.bozkurt/IdeaProjects/kotlinx-io-fork-for-swift-build/Sources/kotlinx_io_core/nativeMain/../../../core/native/src/RawSink.kt
+../../../core/native/src/RawSink.kt
